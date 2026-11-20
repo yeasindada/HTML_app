@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#101010">
+<title>HTML Builder Pro</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101010;color:white;font-family:Arial,sans-serif}
+header{height:65px;background:#191919;border-bottom:1px solid #c49b36;display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:sticky;top:0;z-index:10}
+.logo{font-size:19px;font-weight:bold;color:#e5c35d}
+button{cursor:pointer}
+.btn{padding:11px 14px;border-radius:10px;border:1px solid #80652c;background:#242424;color:#edcf75;font-weight:bold}
+.gold{background:linear-gradient(135deg,#f5dc86,#b68c28);color:#17130a;border:0}
+.menu{display:none;position:absolute;right:12px;top:58px;width:205px;background:#242424;border:1px solid #b9943a;border-radius:12px;padding:8px;z-index:20}
+.menu button{display:block;width:100%;padding:12px;background:transparent;color:white;border:0;text-align:left}
+main{padding:14px;max-width:900px;margin:auto}
+.heading{font-size:13px;color:#e3c15e;margin:19px 0 10px;font-weight:bold}
+.editorbox{border:1px solid #80652c;border-radius:12px;overflow:hidden;background:#080808}
+.editortop{background:#202020;padding:10px;color:#e4c35e;font-size:12px}
+textarea{width:100%;height:300px;background:#080808;color:#e9d58c;border:0;padding:14px;outline:none;resize:vertical;font:13px/1.6 monospace}
+.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.run{flex:1}
+.previewbox{border:1px solid #80652c;border-radius:12px;overflow:hidden;background:white}
+.previewtop{padding:10px;background:#202020;color:#e6c35e;font-size:12px}
+iframe{width:100%;height:300px;border:0;display:block;background:white}
+#overlay{display:none;position:fixed;inset:0;background:#111;z-index:100}
+#overlay iframe{height:calc(100% - 55px)}
+.overlaytop{height:55px;background:#191919;display:flex;align-items:center;justify-content:space-between;padding:0 14px;color:gold}
+.panel{padding:14px;background:#202020;border:1px solid #665020;border-radius:12px;margin-top:14px}
+.project{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px;margin:8px 0;background:#242424;border:1px solid #57451e;border-radius:10px}
+.projectname{flex:1;color:#efd078;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+input{width:100%;padding:13px;margin:7px 0;background:#080808;color:white;border:1px solid #80652c;border-radius:9px}
+.small{font-size:12px;color:#aaa;line-height:1.6}
+#toast{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#e3bd55;color:#111;padding:12px 18px;border-radius:10px;z-index:200}
+footer{padding:15px;max-width:900px;margin:auto}
+footer button{width:100%;padding:16px;font-size:15px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">♛ HTML BUILDER PRO</div>
+<button class="btn" onclick="toggleMenu()">⋮</button>
+<div class="menu" id="menu">
+<button onclick="copyCode()">📋 Copy Code</button>
+<button onclick="saveProject()">💾 Save Project</button>
+<button onclick="showProjects()">📁 My Projects</button>
+<button onclick="downloadHTML()">⬇ Download HTML</button>
+<button onclick="clearEditor()">🗑 Clear Editor</button>
+<button onclick="resetSample()">↻ Reset Sample</button>
+</div>
+</header>
+
+<main>
+<div class="heading">HTML / CSS / JAVASCRIPT EDITOR</div>
+<div class="editorbox">
+<div class="editortop">● index.html <span style="float:right">CODE EDITOR</span></div>
+<textarea id="editor" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+body{
+ background:#151515;
+ color:gold;
+ text-align:center;
+ padding:40px 15px;
+ font-family:Arial;
+}
+h1{color:gold}
+button{
+ background:gold;
+ padding:12px 22px;
+ border:0;
+ border-radius:8px;
+}
+</style>
+</head>
+<body>
+<h1>Hello World!</h1>
+<p>Welcome to HTML Builder Pro</p>
+<button onclick="alert('Hello!')">Click Me</button>
+</body>
+</html></textarea>
+</div>
+
+<div class="actions">
+<button class="btn gold run" onclick="runCode()">▶ RUN CODE</button>
+<button class="btn" onclick="fullPreview()">⛶ FULL SCREEN</button>
+</div>
+
+<div class="heading">LIVE PREVIEW</div>
+<div class="previewbox">
+<div class="previewtop">● LIVE WEBSITE PREVIEW</div>
+<iframe id="preview" title="Preview" sandbox="allow-scripts allow-forms allow-modals"></iframe>
+</div>
+
+<section id="projectSection" class="hidden">
+<div class="heading">📁 MY PROJECTS</div>
+<div id="projects"></div>
+</section>
+
+<div class="panel">
+<div class="heading" style="margin-top:0">APK BUILDER SETTINGS</div>
+<input id="appName" placeholder="App Name">
+<input id="repo" placeholder="GitHub Username/Repository">
+<button class="btn gold" style="width:100%" onclick="openBuild()">OPEN GITHUB APK BUILD</button>
+<p class="small">GitHub Actions থেকে APK তৈরি হবে। Token এই HTML ফাইলে রাখা হবে না।</p>
+</div>
+</main>
+
+<footer>
+<button class="btn gold" onclick="document.querySelector('.panel').scrollIntoView({behavior:'smooth'})">⬇ GENERATE APK</button>
+<p class="small" style="text-align:center">HTML BUILDER PRO • PREMIUM EDITION</p>
+</footer>
+
+<div id="overlay">
+<div class="overlaytop">
+<b>LIVE PREVIEW</b>
+<button class="btn" onclick="closePreview()">✕ CLOSE</button>
+</div>
+<iframe id="fullFrame" title="Full Preview" sandbox="allow-scripts allow-forms allow-modals"></iframe>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const editor=document.getElementById('editor');
+const preview=document.getElementById('preview');
+const fullFrame=document.getElementById('fullFrame');
+const KEY='html_builder_pro_projects';
+
+function toast(msg){
+const t=document.getElementById('toast');
+t.textContent=msg;t.style.display='block';
+setTimeout(()=>t.style.display='none',2200);
+}
+function toggleMenu(){
+const m=document.getElementById('menu');
+m.style.display=m.style.display==='block'?'none':'block';
+}
+document.addEventListener('click',e=>{
+if(!e.target.closest('header'))document.getElementById('menu').style.display='none';
+});
+function runCode(){preview.srcdoc=editor.value;}
+function fullPreview(){
+fullFrame.srcdoc=editor.value;
+document.getElementById('overlay').style.display='block';
+}
+function closePreview(){document.getElementById('overlay').style.display='none';}
+function copyCode(){
+if(navigator.clipboard){
+navigator.clipboard.writeText(editor.value).then(()=>toast('Code Copied!')).catch(()=>toast('Copy failed'));
+}else{
+editor.select();
+document.execCommand('copy');
+toast('Code Copied!');
+}
+}
+function downloadHTML(){
+const blob=new Blob([editor.value],{type:'text/html;charset=utf-8'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');
+a.href=url;a.download='index.html';
+document.body.appendChild(a);a.click();a.remove();
+setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function clearEditor(){
+if(confirm('Clear all code?')){editor.value='';runCode();}
+}
+function resetSample(){
+if(confirm('Reset sample code?')){
+editor.value='<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><h1>Hello World!</h1></body></html>';
+runCode();
+}
+}
+function getProjects(){
+try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []}
+}
+function setProjects(p){localStorage.setItem(KEY,JSON.stringify(p));}
+function saveProject(){
+const name=prompt('Project name:');
+if(!name||!name.trim())return;
+const p=getProjects();
+const item={name:name.trim(),code:editor.value};
+const i=p.findIndex(x=>x.name===item.name);
+if(i>=0)p[i]=item;else p.push(item);
+setProjects(p);showProjects();toast('Project Saved!');
+}
+function showProjects(){
+const section=document.getElementById('projectSection');
+section.classList.remove('hidden');
+const list=document.getElementById('projects');
+list.replaceChildren();
+const p=getProjects();
+if(!p.length){
+const empty=document.createElement('p');
+empty.className='small';empty.textContent='No saved projects';
+list.appendChild(empty);
+}
+p.forEach((item,i)=>{
+const row=document.createElement('div');
+row.className='project';
+const name=document.createElement('span');
+name.className='projectname';
+name.textContent=item.name;
+name.onclick=()=>openProject(i);
+const open=document.createElement('button');
+open.className='btn';open.textContent='▶';
+open.onclick=()=>openProject(i);
+const more=document.createElement('button');
+more.className='btn';more.textContent='⋮';
+more.onclick=()=>projectMenu(i);
+row.append(name,open,more);
+list.appendChild(row);
+});
+section.scrollIntoView({behavior:'smooth'});
+}
+function openProject(i){
+const p=getProjects()[i];if(!p)return;
+fullFrame.srcdoc=p.code;
+document.getElementById('overlay').style.display='block';
+}
+function projectMenu(i){
+const choice=prompt('1 Edit Code\\n2 Generate HTML File\\n3 Delete Project');
+const p=getProjects();
+if(!p[i])return;
+if(choice==='1'){
+editor.value=p[i].code;runCode();
+window.scrollTo({top:0,behavior:'smooth'});
+toast('Project Loaded');
+}
+if(choice==='2'){
+const old=editor.value;editor.value=p[i].code;
+downloadHTML();editor.value=old;
+}
+if(choice==='3'&&confirm('Delete Project?')){
+p.splice(i,1);setProjects(p);showProjects();toast('Project Deleted');
+}
+}
+function openBuild(){
+const repo=document.getElementById('repo').value.trim();
+const name=document.getElementById('appName').value.trim();
+if(!/^[-a-zA-Z0-9_.]+\/[-a-zA-Z0-9_.]+$/.test(repo)){
+toast('Enter username/repository');return;
+}
+if(name)localStorage.setItem('html_builder_app_name',name);
+window.open('https://github.com/'+repo+'/actions','_blank');
+}
+runCode();
+</script>
+</body>
+</html>
