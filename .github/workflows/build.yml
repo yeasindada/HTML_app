@@ -1,0 +1,65 @@
+
+name: HTML Builder Pro APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_name:
+        description: Android App Name
+        required: true
+        default: HTML Builder Pro
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Configure App Name
+        run: |
+          node -e "
+          const fs=require('fs');
+          const c=JSON.parse(fs.readFileSync('capacitor.config.json'));
+          c.appName=process.env.APP_NAME;
+          fs.writeFileSync('capacitor.config.json',JSON.stringify(c,null,2));
+          "
+        env:
+          APP_NAME: ${{ inputs.app_name }}
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Add Android
+        run: npx cap add android
+
+      - name: Sync Android
+        run: npx cap sync android
+
+      - name: Build Debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: HTML-Builder-Pro-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
